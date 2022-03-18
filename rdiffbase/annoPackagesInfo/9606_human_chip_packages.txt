@@ -1,0 +1,2 @@
+Package	Maintainer	Title	Rank
+hgu133plus2.db	Bioconductor Package Maintainer	Affymetrix Affymetrix HG-U133_Plus_2 Array annotation data (chip hgu133plus2)	11

@@ -1,0 +1,66 @@
+version: "3.7"
+services:
+  rdiffserver:
+    restart: "no"
+    build: "./rdiffServer"
+    container_name: "rdiffserver"
+    working_dir: "/code"
+    command: ["sh", "./diffServer.sh"]
+    ports:
+      - "8001:8001"
+    expose:
+      - "8001"
+    hostname: rdiffserver
+    image: rdiffserver-image
+
+  rclinicalserver:
+    restart: "no"
+    build: "./rClinicalServer"
+    container_name: "rclinicalserver"
+    working_dir: "/code"
+    command: ["sh", "./clinicalServer.sh"]
+    ports:
+      - "8002:8002"
+    expose:
+      - "8002"
+    hostname: rclinicalserver
+    image: rclinicalserver-image
+    
+  djangoserver:
+    restart: "no"
+    build: ./expressvis-server
+    container_name: djangoserver
+    command: ["uwsgi", "--ini", "uwsgi.ini"]
+    expose:
+      - "8000"
+    hostname: djangoserver
+    image: djangoserver-image
+    depends_on:
+      - rdiffserver
+      - rclinicalserver
+    volumes:
+      - appshared:/app_sock # app_shared volume is used to store sock file that should be accessible from nginx server
+      - /var/log/dockeruwsgi:/var/log/uwsgi
+      - /home/changcheng/websites/ExpressVis/database/serveredByDjango:/database
+  
+  nginx:
+    container_name: nginx-container
+    build: ./nginx
+    restart: "no"
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - djangoserver
+    volumes: 
+      - appshared:/nginx_sock
+      - /var/log/dockernginx:/var/log/nginx
+      - /home/changcheng/websites/ExpressVis/database/serveredByNginx:/static
+
+volumes:
+  appshared:
+  
+
+
+  
+    
