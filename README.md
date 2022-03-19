@@ -1,37 +1,51 @@
 # ExpressVis-docker
 
-#### 介绍
-Deployment files for ExpressVis (https://omicsmining.ncpsb.org.cn/ExpressVis/home)
+#### Description
+The project contains all necessary files for deploying ExpressVis (https://omicsmining.ncpsb.org.cn/ExpressVis/home) with Docker. Users can easily deploy ExpressVis locally or in the own server.
 
-#### 软件架构
-软件架构说明
+#### Prerequisite
 
-
-#### 安装教程
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 使用说明
-
-1.  xxxx
-2.  xxxx
-3.  xxxx
-
-#### 参与贡献
-
-1.  Fork 本仓库
-2.  新建 Feat_xxx 分支
-3.  提交代码
-4.  新建 Pull Request
+1. Install [Docker](https://docs.docker.com/engine/install/) and [docker-compose](https://docs.docker.com/compose/install/)
+   
+2. Download ExpressVis.database.zip from ftp(ftp://omicsmining.ncpsb.org.cn/pub). Unzip the data and place them in a directory.
 
 
-#### 特技
+#### Deploy ExpressVis
+1. Clone this project
+   
+   `
+   git clone https://gitee.com/omicsmining/express-vis-docker.git
+   `
 
-1.  使用 Readme\_XXX.md 来支持不同的语言，例如 Readme\_en.md, Readme\_zh.md
-2.  Gitee 官方博客 [blog.gitee.com](https://blog.gitee.com)
-3.  你可以 [https://gitee.com/explore](https://gitee.com/explore) 这个地址来了解 Gitee 上的优秀开源项目
-4.  [GVP](https://gitee.com/gvp) 全称是 Gitee 最有价值开源项目，是综合评定出的优秀开源项目
-5.  Gitee 官方提供的使用手册 [https://gitee.com/help](https://gitee.com/help)
-6.  Gitee 封面人物是一档用来展示 Gitee 会员风采的栏目 [https://gitee.com/gitee-stars/](https://gitee.com/gitee-stars/)
+2.  Change to ExpressVis-Docker directory
+
+    `
+      cd ExpressVis-docker
+    `
+
+3.  Change database path in docker-compose.yml file.
+
+    > change '/user/annotationDatabasePath' to your database directory(from prerequisite 2) in setion djangoserver/volumes and section nginx/volumns/
+
+4.  Build docker image rdiffbase. Rdifbase image will be used in rdiffServer image. Docker installs all necessary Microaray annotation packages and so building rdiffbase will take a long time. We recommend users only install Microarray packages they requires. By default, the Microarray packages in this project are just a few packages for test. Users can change the packages to be installed in ./rdiffbase/annoPackagesInfo/**.txt files. MicroarrayPackages.zip file that contains all Microarray packages infos can be download from ftp(ftp://omicsmining.ncpsb.org.cn/pub). 
+   
+    ```
+    cd ./diffbase       
+    docker build -t rdiffbase .
+    ```
+
+5. Build images and run containsers using docker-compose
+
+   ```
+   cd .. # Go back to the root directory of ExpressVis-docker from ./diffBase
+   docker-compose up -d
+   ```
+
+6. Open ExpessVis in a browser with the url [localhost:80/ExpressVis/home](localhost:80/ExpressVis/home).
+
+
+
+
+
+
+
