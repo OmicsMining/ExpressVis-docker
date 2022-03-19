@@ -6,51 +6,6 @@ source("./deseq2.R")
 library(rjson)
 
 
-DATABASE_DIR = "/media/thudxz/Research/process/bioinformatics_tools/angular_django_time_series/database/"
-#* @param geoSeriesAcc
-#* @param baseSamples
-#* @param targetSamples
-#* @post /arrayonegrouppairdiffanalysiswithseriesacc
-function(geoSeriesAcc, annoLibrary, baseSamples, targetSamples) {
-  geoSubDir  <- formatGEOfilePath(geoSeriesAcc = geoSeriesAcc)
-  geoEdsPath <- paste(DATABASE_DIR, "datasets/", "GEO/", geoSubDir, 
-                      "/", geoSeriesAcc, "/eSet.rds",
-                      sep = "")
-  expressSet <- readRDS(geoEdsPath)
-
-  diffResults <- affyLimmaOneDiffGroupPairDiffAnalysis( 
-    expressSet    = expressSet, 
-    annoLibrary   = annoLibrary, 
-    baseSamples   = baseSamples, 
-    targetSamples = targetSamples
-  )
-  
-  return (rjson::toJSON(diffResults))
-}
-
-
-#* @param geoSeriesAcc
-#* @param annoLibrary
-#* @param diffGroupPairs
-#* @post /arraymultiplediffanalysiswithseriesacc
-function(geoSeriesAcc, annoLibrary, diffGroupPairs) {
-  geoSubDir  <- formatGEOfilePath(geoSeriesAcc = geoSeriesAcc)
-  geoEdsPath <- paste(DATABASE_DIR, "datasets/", "GEO/", geoSubDir, 
-                      "/", geoSeriesAcc, "/eSet.rds",
-                      sep = "")
-  expressSet <- readRDS(geoEdsPath)
-  
-  groupPairList <- convertDiffGroupPairs(diffGroupPairs)
-  
-  diffResults <- affyLimmaMultipleDiffGroupPairsDiffAnalysis(
-    expressSet        = expressSet, 
-    annoLibrary       = annoLibrary, 
-    diffGroupPairList = groupPairList
-  )
-  return (rjson::toJSON(diffResults)) # use toJSON here
-}
-
-
 #* @param valuesDic
 #* @param genes
 #* @param annoLibrary

@@ -1,0 +1,8 @@
+.Rhistory
+.Rprofile
+.Rproj.user
+r-clinical.Rproj
+renv.lock
+renv/
+testData/
+
