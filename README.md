@@ -1,7 +1,7 @@
 # ExpressVis-docker
 
 #### Description
-The project contains all necessary files for deploying ExpressVis (https://omicsmining.ncpsb.org.cn/ExpressVis/home) with Docker. Users can easily deploy ExpressVis locally or in the own server.
+The project contains all necessary files for deploying ExpressVis (https://omicsmining.ncpsb.org.cn/ExpressVis/home) with Docker. Users can easily deploy ExpressVis locally or in their own server.
 
 #### Prerequisite
 
