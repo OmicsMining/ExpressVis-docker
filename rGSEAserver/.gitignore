@@ -1,0 +1,14 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+
+/testData
+./testData/
+
+/renv/library
+/renv/local
+/renv/cellar
+/renv/lock
+/renv/python
+/renv/staging
