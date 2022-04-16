@@ -6,4 +6,4 @@ RUN apt-get update -y \
 
 COPY ./code ./code
 
-RUN sh ./code/installRequiredPackages.R
+RUN Rscript ./code/installRequiredPackages.R
