@@ -8,5 +8,6 @@ urlpatterns = [
     name = 'obtainSpeciesMappingInfoBetweenTwoTypes'),
   url(r'arrayIDtypesInOneSpecies', views.LoadArrayIDTypesInOneSpecies.as_view(), name = "LoadArrayIDTypesInOneSpecies"),
   url(r'annotationTerms', views.AnnotationTerms.as_view(), name = "load annotation terms"),
-  url(r'annotationGenes', views.AnnotationGenes.as_view(), name = "load genes in an annotation term")
+  url(r'annotationGenes', views.AnnotationGenes.as_view(), name = "load genes in an annotation term"),
+  url(r'obtainMatchedIDsPercentage', views.IDmatchedPercentage.as_view(), name = "obtain matched ids percentage"),
 ]

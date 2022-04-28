@@ -19,7 +19,6 @@ from django.contrib import admin
 from django.conf.urls.static import static
 
 urlpatterns = [
-  url(r'dataset/', include('dataset.urls')),
   url(r'enrichment/', include('enrichment.urls')),
   url(r'annotation/', include('annotation.urls')),
   url(r'keggExplore/', include('keggExplore.urls')),
@@ -27,7 +26,9 @@ urlpatterns = [
   url(r'diffAnalysis/', include('diffAnalysis.urls')),
   url(r'ids/', include('idConversion.urls')),
   url(r'ppinetwork/', include('constructPPInetwork.urls')),
-  url(r'proteomics/', include('preprocessproteomics.urls')),
+  url(r'preprocess/', include('preprocessData.urls')),
   url(r'clinical/',   include('clinical.urls')),
+  url(r'integration/', include('integrationExp.urls')),
+  url(r'exploreAnalysis/', include('exploreAnalysis.urls')),
   url(r'^admin/', admin.site.urls),
 ] #+ static(STATIC_URL, document_root=STATIC_ROOT)

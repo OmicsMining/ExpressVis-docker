@@ -102,7 +102,7 @@ class parseKgml(APIView):
     self.processEntriesKegg(request)
     self.process_kgml(request)
     if self.genesIdSymbol:
-      print(self.genesIdSymbol)
+      pass
     if (self.error_note):
       return Response({"kegg_note": self.error_note})
     else:

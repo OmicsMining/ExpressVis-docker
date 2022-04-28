@@ -56,9 +56,10 @@ class TestKeggFunctions(TestCase):
 
 
 class TestPathwayInfoParse(TestCase):
-  def testObtainEntry2symbols(self):
+  def testObtainEntry2symbolsDescriptionNoTwoParagraphs(self):
     speciesID = "9606"
     pathwayID = "hsa04919"
+    # pathwayID = "hsa04110"
     pathwayInfoPath = os.path.join(DATABASE_DIR, "speciesCenteredInfo", speciesID, "kegg", "pathwayInfo", pathwayID + ".txt")
     with open(pathwayInfoPath, "r") as f:
       pathwayInfoString = f.read()
@@ -67,6 +68,17 @@ class TestPathwayInfoParse(TestCase):
     self.assertEqual(entry2symbol["5566"], "PRKACA")
     self.assertEqual(entry2symbol["25942"], "SIN3A")
     self.assertEqual(entry2symbol["60"], "ACTB")
+  def testObtainEntry2symbolsDescriptionHasTwoParagraphs(self):
+    speciesID = "9606"
+    pathwayID = "hsa04110" # The description of cell cycle has two paragraphs
+    pathwayInfoPath = os.path.join(DATABASE_DIR, "speciesCenteredInfo", speciesID, "kegg", "pathwayInfo", pathwayID + ".txt")
+    with open(pathwayInfoPath, "r") as f:
+      pathwayInfoString = f.read()
+    pathwayInfoParse = PathwayInfoParse(pathwayInfoString = pathwayInfoString)
+    entry2symbol     = pathwayInfoParse.obtainEntryID2symbol()
+    self.assertEqual(entry2symbol["595"], "CCND1")
+    self.assertEqual(entry2symbol["1021"], "CDK6")
+    self.assertEqual(entry2symbol["4176"], "MCM7")
 
 class TestObtainKGMLstring(TestCase):
   def testObtainKGMLstring(self):

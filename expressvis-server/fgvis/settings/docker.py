@@ -7,4 +7,5 @@ DEBUG = True
 DATABASE_DIR = "../database/"
 DIFF_ANALYSIS_URL = "http://rdiffserver:8001/" 
 CLINICAL_URL      = "http://rclinicalserver:8002/"
-
+GSEA_URL          = "http://rgseaserver:8003/"
+BATCH_URL         = "http://rremovebatchserver:8004/"

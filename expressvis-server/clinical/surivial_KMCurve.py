@@ -3,6 +3,9 @@ import numpy as np
 import pandas as pd
 from lifelines import KaplanMeierFitter
 import json
+from itertools import combinations
+from lifelines import CoxPHFitter
+from lifelines.statistics import pairwise_logrank_test
 
 '''
 ## Writen by Kaikun Xu
@@ -71,6 +74,21 @@ def generateKMinfoForPlot(eventTimes, eventStatus, highOrLows):
     kmSub.insert(loc=0,column="Label",value=labels)
     kmDF = pd.concat([kmDF,kmSub],axis=0)
   return kmDF.reset_index(drop=True).to_dict(orient="list") 
+
+
+
+# def generateKMCurveTable(eventTimes, eventStatus, categories, categoryOrder):
+#   '''
+#   Input:
+#     eventTimes: a list
+#     status: a list,
+#     categories: categories for each patient
+#     categoryOrder: a list
+#   '''
+
+# def generateKMCurveText(eventTimes, eventStatus, categories, categoryOrder):
+
+
 
 
 # if __name__=="main":

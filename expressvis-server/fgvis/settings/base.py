@@ -37,11 +37,14 @@ INSTALLED_APPS = [
     #'django_ajax',
     #'rest_framework.authtoken',
     'pathwayEnrichment',
+    'preprocessData',
     'enrichment',
     'annotation',
+    'exploreAnalysis',
     'clustering',
     'keggExplore',
-    'clinical'
+    'clinical',
+    "integrationExp"
 ]
 
 MIDDLEWARE = [
@@ -109,6 +112,13 @@ AUTH_PASSWORD_VALIDATORS = [
 REST_FRAMEWORK = {
     'DEFAULT_PERMISSION_CLASSES': [],
     'DEFAULT_AUTHENTICATION_CLASSES': [],
+    'DEFAULT_RENDERER_CLASSES': [
+        'rest_framework.renderers.JSONRenderer',
+    ],
+    'DEFAULT_PARSER_CLASSES': [
+        'rest_framework.parsers.JSONParser',
+    ],
+    "STRICT_JSON": True,
 #     'DEFAULT_PERMISSION_CLASSES':
 #       ['rest_framework.permissions.IsAdminUser'],
 #     'DEFAULT_AUTHENTICATION_CLASSES': (

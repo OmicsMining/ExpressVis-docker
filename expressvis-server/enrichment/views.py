@@ -4,6 +4,8 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 
 from enrichment.enrichCompute import EnrichMultipleAnnotationsAdapter
+from enrichment.obtainGSEAenrichedAnnotations import corGSEAenrichedAnnotations
+
 from enrichment.settings import species2supportedEnrichAnnotations
 #from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from fgvis.settings import BASE_DIR
@@ -48,6 +50,28 @@ class PathwayEnrichment(APIView):
     enrichedResults = enrichMultipleAnnotations.obtainEnrichedResult()
 
     return Response(enrichedResults)
+
+
+
+
+# Create your views here.
+
+class GSEAallAnnotations(APIView):
+  def post(self, request, *args, **kwargs):
+    '''
+      speciesID: string;
+      genes:     string[];
+      geneIDtype: string[];
+      valuesForRank: number[]; 
+    '''
+    requestData = request.data
+    GSEAresults = corGSEAenrichedAnnotations(
+      speciesID     = requestData["speciesID"],
+      geneIDtype    = requestData["geneIDtype"],
+      valuesForRank = requestData["valuesForRank"],
+      genes         = requestData["genes"],
+    )
+    return Response(GSEAresults)
 
 # enrichment
 class tfsEnrichment(APIView):

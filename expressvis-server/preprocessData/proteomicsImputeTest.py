@@ -2,7 +2,7 @@ import os
 from django.test import TestCase
 import pandas as pd
 from fgvis.settings import SERVER_TEST_DIR
-from preprocessproteomics.proteomicsImpute import impute
+from preprocessData.proteomicsImpute import impute
 
 class ProteomicsImputeTest(TestCase):
   def setUp(self):

@@ -1,6 +1,6 @@
 from django.test import TestCase
 import pandas as pd
-import feather
+#import feather
 import json
 from exploreAnalysis.samplesCor import obtainSamplesCorAndClusteringInfo
 from fgvis.settings import DATABASE_DIR, FRONTEND_TEST_DIR

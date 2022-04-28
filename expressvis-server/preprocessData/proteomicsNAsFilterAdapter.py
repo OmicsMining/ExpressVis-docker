@@ -1,5 +1,5 @@
 import pandas as pd
-from preprocessproteomics.proteomicsNAsFilter import naFilter, naConvert
+from preprocessData.proteomicsNAsFilter import naFilter, naConvert
 
 def addGroupsAsMultiindex(dataframe, groups):
   samples = dataframe.columns.tolist()

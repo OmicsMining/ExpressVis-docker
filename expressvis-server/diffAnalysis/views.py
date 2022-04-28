@@ -40,7 +40,8 @@ class LocalDataOneGroupPairDiffView(APIView):
         foldchangeMethod = diffAnalysisSettings["FCcalMethod"], 
         statisticsMethod = diffAnalysisSettings["pValuCalMethod"], 
         multipleTestsCorrectMethod = diffAnalysisSettings["pValueAdjMethod"],
-      );
+      )
+
     return Response({"diffResults":  diffResult, 
                      "diffSoftware": diffSoftware})
 

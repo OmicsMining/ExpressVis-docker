@@ -37,6 +37,19 @@ def obtainSurvivalSplitAndForest(clinicalDic, expressionDic, patientIDs, endpoin
     }
     clinicalResult = requests.post(url = requestUrl,
                                   json = requestData)
+  elif highLowSplitSetting["method"] == "approximativeMaxstatSplit":
+    requestUrl    = CLINICAL_URL + "surivialSplitApproximativeMaxStatAndForestAnnotation"
+    requestData = {
+      "clinicalDic":   clinicalDic,
+      "expressionDic": expressionDic,
+      "patientIDs":    patientIDs,
+      "endpointTimeCol":   endpointTimeCol,
+      "endpointStatusCol": endpointStatusCol,
+      "minProb": highLowSplitSetting["settings"]["minProb"],
+      "maxProb": highLowSplitSetting["settings"]["maxProb"]
+    }
+    clinicalResult = requests.post(url = requestUrl,
+                                  json = requestData)
   elif highLowSplitSetting["method"] == "percentageSplit":
     requestUrl = CLINICAL_URL + "surivialSplitPercentageAndForestAnnotation"
     
@@ -50,4 +63,6 @@ def obtainSurvivalSplitAndForest(clinicalDic, expressionDic, patientIDs, endpoin
     }
     clinicalResult = requests.post(url = requestUrl,
                                    json = requestData)
+  
+
   return json.loads(json.loads(clinicalResult.text)[0])

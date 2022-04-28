@@ -1,4 +1,4 @@
-from preprocessproteomics.proteomicsImpute import impute
+from preprocessData.proteomicsImpute import impute
 
 def imputeNAs(dataframe, imputeSettings):
   if ("subSetting" in imputeSettings):

@@ -105,4 +105,19 @@ class SuccessLoadAnnotationsAndGenes(TestCase):
     self.assertEqual(len(self.response.json()["genes"]), 15)
 
 
-    
+class SuccessObtainMatchedPercentageOfGenes(TestCase):
+  def setUp(self):
+    self.client = Client()
+  def testSuccess(self):
+    speciesID = "9606"
+    IDtypeToBeChecked = "UniprotID"
+    IDs = ["P04637", "96S44"]
+
+    request = {
+      "speciesID": speciesID,
+      "IDs":       IDs,
+      "IDtype":    IDtypeToBeChecked
+    }
+    self.response = self.client.post("/restful/annotation/obtainMatchedIDsPercentage",
+      request, content_type = "application/json");
+    self.assertEqual(self.response.json()["matchedPercentage"], 0.5)

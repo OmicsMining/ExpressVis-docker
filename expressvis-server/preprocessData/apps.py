@@ -1,6 +1,6 @@
 from django.apps import AppConfig
 
 
-class PreprocessproteomicsConfig(AppConfig):
+class PreprocessDataConfig(AppConfig):
     default_auto_field = 'django.db.models.BigAutoField'
-    name = 'preprocessproteomics'
+    name = 'preprocessData'

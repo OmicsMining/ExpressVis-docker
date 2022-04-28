@@ -1,6 +1,6 @@
 from django.test import TestCase
 import pandas as pd
-from preprocessproteomics.proteomicsNormalize import norm_sample, norm_protein
+from preprocessData.proteomicsNormalize import norm_sample, norm_protein
 
 
 class SampleNormalizeTest(TestCase):

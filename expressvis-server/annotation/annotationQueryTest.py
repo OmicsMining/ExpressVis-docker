@@ -2,7 +2,8 @@ from django.test import TestCase
 
 from annotation.annotationQuery import obtainAnnotationGenes, obtainAnnotationTerms, obtainGeneIDannoInfor, obtainIDmappingsInfoWithinSpecies, \
   obtainSymbol2MicroarrayProbeIDs, \
-  obtainMicroarrayIDtypesOfOneSpecies
+  obtainMicroarrayIDtypesOfOneSpecies, \
+  checkMatchedPercentageOfgenesUnderSpecificIDtype
 
 class TestQueryGenesBasicInfoFunctions(TestCase):
   def testObtainMicroarrayProbeIDanno(self):
@@ -92,6 +93,32 @@ class TestObtainAnnotationTermsGenes(TestCase):
     self.assertEqual(len(annotationGenes), 15)
     self.assertEqual(annotationGenes[0], "St8sia1")
     
+class TestIDtypeCheck(TestCase):
+  def testHumanUniprotIDright(self):
+    speciesID = "9606"
+    IDtypeToBeChecked = "UniprotID"
+    IDs = ["P04637", "Q96S44"]
+    matchedPercentage = checkMatchedPercentageOfgenesUnderSpecificIDtype(speciesID, IDs, IDtypeToBeChecked)
+    self.assertEqual(matchedPercentage, 1);
+  def testHumanUniprotIDwrong(self):
+    speciesID = "10090"
+    IDtypeToBeChecked = "UniprotID"
+    IDs = ["P04637", "Q96S44"]
+    matchedPercentage = checkMatchedPercentageOfgenesUnderSpecificIDtype(speciesID, IDs, IDtypeToBeChecked)
+    self.assertEqual(matchedPercentage, 0);
+  def testHumanUniprotIDhalfRight(self):
+    speciesID = "9606"
+    IDtypeToBeChecked = "UniprotID"
+    IDs = ["P04637", "96S44"]
+    matchedPercentage = checkMatchedPercentageOfgenesUnderSpecificIDtype(speciesID, IDs, IDtypeToBeChecked)
+    self.assertEqual(matchedPercentage, 0.5);
+  def testHuamnMicroarrayIDright(self):
+    speciesID = "9606"
+    annoPkgName = "hugene20sttranscriptcluster"
+    IDs = ["17126256"]
+    matchedPercentage = checkMatchedPercentageOfgenesUnderSpecificIDtype(speciesID, IDs, annoPkgName)
+    self.assertEqual(matchedPercentage, 1)
+
 # testFunctions = TestAnnotationQueryFunctions()
 # testFunctions.testObtainEnsembleIDannoInfoForDisplay()
 

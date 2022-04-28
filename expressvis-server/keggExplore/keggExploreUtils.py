@@ -6,8 +6,8 @@ import json
 
 from fgvis.settings import DATABASE_DIR
 
-from idConversion.idMapping     import obtainProbesFromEntrez
-from dataset.subsetDataset      import subsetProcessedDataByGenesFromGEO
+# from idConversion.idMapping     import obtainProbesFromEntrez
+# from dataset.subsetDataset      import subsetProcessedDataByGenesFromGEO
 from clustering.clusteringUtils import Matrix2clusterTree, obtainValuesArraysAcrossGroupsSamples
 
 
@@ -19,10 +19,15 @@ class PathwayInfoParse():
   def _obtainMaximWhiteSpaceInTheFront(self):
     maxWhiteSpaceNum = 0
     for eachLine in self.lines:
-      if eachLine.startswith(" "):
-        whiteSpaceNum = len(eachLine) - len(eachLine.lstrip(' '))
+      if not eachLine.startswith(" "): # means there are terms
+        whiteSpaceNum = len(eachLine.split(" ")[0]) + 1
         if whiteSpaceNum > maxWhiteSpaceNum:
           maxWhiteSpaceNum = whiteSpaceNum
+      # if eachLine.startswith(" "):
+      #   whiteSpaceNum = len(eachLine) - len(eachLine.lstrip(' '))
+      #   if whiteSpaceNum > maxWhiteSpaceNum:
+      #     maxWhiteSpaceNum = whiteSpaceNum
+      #! Do not use this, some descriptions may contain multiple paragraphs. The the maxWhiteSapceNum is larger
     self.maxWhiteSpaceNum = maxWhiteSpaceNum
   def _obtainTermRange(self, term):
     ifTermExist = False # if the word exists in the firt words
@@ -52,7 +57,6 @@ class PathwayInfoParse():
     termRange = self._obtainTermRange("GENE")
     
     entry2symbol = {}
-   
     firstGeneInfoList = self.lines[termRange["start"]].strip().split(termRange["splitWhite"])[1].split("  ")
     firstGeneID     = firstGeneInfoList[0]
     firstGeneSymbol = firstGeneInfoList[1].strip().split(";")[0]
@@ -165,100 +169,100 @@ def obtainKeggPathwayKGMLstring(speciesID, pathwayID):
   return obtainKeggPathwayKGMLstringFromLocalDatabase(speciesID, pathwayID)
 
 
-def obtainKeggGenesClusteringInfoFromDataset(keggID, geoSeriesAcc, groups, *args, **kwargs):
-  '''
-  Steps:
-    1. obtain genes in the pathway
-    2. cluster genes across samples
-    3. cluster genes across groups
-  return: 
-    {
-      pathwayID: string,
-      acrossGroups:  ClusteringResult, 
-      acrossSamples: ClusteringResult
-    },
-    ClusteringResult: 
-      {
-        xDendgrogramInfor: any;
-        yDendgrogramInfor: any;
-        dataArray: number[][];
-        xTerms: string[];
-        yTerms: string[];
-      }
-  '''
-  pathwayGenes2Symbols = obtainKEGGpathwayGenesInfo(kegg_id = keggID)
-  pathwayGenes = list(pathwayGenes2Symbols.keys())
-  # obtain probe ids
-  genesInfoInArray = obtainProbesFromEntrez(
-    annoPkgName = "hugene20sttranscriptcluster.db", # obtain annoPkgName first
-    genes       = pathwayGenes)
-  genesProbes = genesInfoInArray["PROBEID"].to_list()
-  # obtain expression info for clustering
-  processedData = subsetProcessedDataByGenesFromGEO(
-                   accession = geoSeriesAcc,
-                   genes     = genesProbes )
-  genesExprs = obtainValuesArraysAcrossGroupsSamples(
-                  processedData = processedData,
-                  groups = groups )
-  exprsAcrossSamples = genesExprs["samplesExprsMatrix"] 
-  exprsAcrossGroups  = genesExprs["groupsExprsMatrix"]
-  samples    = genesExprs["samples"]
-  groupNames = genesExprs["groupNames"]
-  genes      = genesExprs["genes"]
-  # obtain genes symbols
-  genesInfoInArrayReIndex = genesInfoInArray.set_index("PROBEID")
-  genesInfoInArrayReIndex = genesInfoInArrayReIndex.reindex(genes, fill_value = "")
-  genesSymbols = genesInfoInArrayReIndex["SYMBOL"].to_list()
+# def obtainKeggGenesClusteringInfoFromDataset(keggID, geoSeriesAcc, groups, *args, **kwargs):
+#   '''
+#   Steps:
+#     1. obtain genes in the pathway
+#     2. cluster genes across samples
+#     3. cluster genes across groups
+#   return: 
+#     {
+#       pathwayID: string,
+#       acrossGroups:  ClusteringResult, 
+#       acrossSamples: ClusteringResult
+#     },
+#     ClusteringResult: 
+#       {
+#         xDendgrogramInfor: any;
+#         yDendgrogramInfor: any;
+#         dataArray: number[][];
+#         xTerms: string[];
+#         yTerms: string[];
+#       }
+#   '''
+#   pathwayGenes2Symbols = obtainKEGGpathwayGenesInfo(kegg_id = keggID)
+#   pathwayGenes = list(pathwayGenes2Symbols.keys())
+#   # obtain probe ids
+#   genesInfoInArray = obtainProbesFromEntrez(
+#     annoPkgName = "hugene20sttranscriptcluster.db", # obtain annoPkgName first
+#     genes       = pathwayGenes)
+#   genesProbes = genesInfoInArray["PROBEID"].to_list()
+#   # obtain expression info for clustering
+#   processedData = subsetProcessedDataByGenesFromGEO(
+#                    accession = geoSeriesAcc,
+#                    genes     = genesProbes )
+#   genesExprs = obtainValuesArraysAcrossGroupsSamples(
+#                   processedData = processedData,
+#                   groups = groups )
+#   exprsAcrossSamples = genesExprs["samplesExprsMatrix"] 
+#   exprsAcrossGroups  = genesExprs["groupsExprsMatrix"]
+#   samples    = genesExprs["samples"]
+#   groupNames = genesExprs["groupNames"]
+#   genes      = genesExprs["genes"]
+#   # obtain genes symbols
+#   genesInfoInArrayReIndex = genesInfoInArray.set_index("PROBEID")
+#   genesInfoInArrayReIndex = genesInfoInArrayReIndex.reindex(genes, fill_value = "")
+#   genesSymbols = genesInfoInArrayReIndex["SYMBOL"].to_list()
 
-  assert len(genes) == len(genesSymbols)
-  # obtain dendrogram
-  acrossSamplesLeftDendgro = Matrix2clusterTree(matrix = exprsAcrossSamples).gainClusterJson()
-  acrossSamplesTopDendgro  = Matrix2clusterTree(matrix = exprsAcrossSamples.transpose()).gainClusterJson()
+#   assert len(genes) == len(genesSymbols)
+#   # obtain dendrogram
+#   acrossSamplesLeftDendgro = Matrix2clusterTree(matrix = exprsAcrossSamples).gainClusterJson()
+#   acrossSamplesTopDendgro  = Matrix2clusterTree(matrix = exprsAcrossSamples.transpose()).gainClusterJson()
 
-  acrossGroupsLeftDendgro = Matrix2clusterTree(matrix = exprsAcrossGroups).gainClusterJson()
-  acrossGroupsTopDendgro  = Matrix2clusterTree(matrix = exprsAcrossGroups.transpose()).gainClusterJson()
+#   acrossGroupsLeftDendgro = Matrix2clusterTree(matrix = exprsAcrossGroups).gainClusterJson()
+#   acrossGroupsTopDendgro  = Matrix2clusterTree(matrix = exprsAcrossGroups.transpose()).gainClusterJson()
   
-  # return result
-  keggPathClusterInfo = {
-    "pathwayID": keggID,
-    "dataID": geoSeriesAcc,
-    "acrossGroups": {
-      "leftDendgrogramInfor": acrossGroupsLeftDendgro,
-      "topDendgrogramInfor": acrossGroupsTopDendgro,
-      "dataArray": exprsAcrossGroups,
-      "leftUniqueTerms": genes, 
-      "leftDisplayTerms": genesSymbols,
-      "topUniqueTerms": groupNames
-    },
-    "acrossSamples": {
-      "leftDendgrogramInfor": acrossSamplesLeftDendgro,
-      "topDendgrogramInfor": acrossSamplesTopDendgro,
-      "dataArray": exprsAcrossSamples,
-      "leftUniqueTerms": genes,
-      "leftDisplayTerms": genesSymbols,
-      "topUniqueTerms": samples,
-    }
-  }
-  return keggPathClusterInfo
+#   # return result
+#   keggPathClusterInfo = {
+#     "pathwayID": keggID,
+#     "dataID": geoSeriesAcc,
+#     "acrossGroups": {
+#       "leftDendgrogramInfor": acrossGroupsLeftDendgro,
+#       "topDendgrogramInfor": acrossGroupsTopDendgro,
+#       "dataArray": exprsAcrossGroups,
+#       "leftUniqueTerms": genes, 
+#       "leftDisplayTerms": genesSymbols,
+#       "topUniqueTerms": groupNames
+#     },
+#     "acrossSamples": {
+#       "leftDendgrogramInfor": acrossSamplesLeftDendgro,
+#       "topDendgrogramInfor": acrossSamplesTopDendgro,
+#       "dataArray": exprsAcrossSamples,
+#       "leftUniqueTerms": genes,
+#       "leftDisplayTerms": genesSymbols,
+#       "topUniqueTerms": samples,
+#     }
+#   }
+#   return keggPathClusterInfo
 
-def obtainProbeID2EntryIDForMicroarray(annoPkgName, speciesID):
-  '''
-  return： {
-    probeID: entryID
-  }
-  '''
-  entryIDtype = "ENTREZID" # obtain entryIDtype for a species
+# def obtainProbeID2EntryIDForMicroarray(annoPkgName, speciesID):
+#   '''
+#   return： {
+#     probeID: entryID
+#   }
+#   '''
+#   entryIDtype = "ENTREZID" # obtain entryIDtype for a species
   
-  annoFile  = os.path.join(DATABASE_DIR, "annotations", "biocpackages", annoPkgName + ".ftr")
-  annoFrame = pd.read_feather(annoFile)
+#   annoFile  = os.path.join(DATABASE_DIR, "annotations", "biocpackages", annoPkgName + ".ftr")
+#   annoFrame = pd.read_feather(annoFile)
   
-  annoFilter = annoFrame.loc[annoFrame[entryIDtype].notnull(), ]
-  # delete probes that have multiple genes annotations
-  annoFilter = annoFilter.drop_duplicates(subset = ["PROBEID"], keep = "first")
-  # change frame to a dictionary, key 
-  probeID2EntryID = {}
-  for probeID, entryID in zip(annoFilter["PROBEID"], annoFilter[entryIDtype]):
-    probeID2EntryID[probeID] = entryID
-  return probeID2EntryID
+#   annoFilter = annoFrame.loc[annoFrame[entryIDtype].notnull(), ]
+#   # delete probes that have multiple genes annotations
+#   annoFilter = annoFilter.drop_duplicates(subset = ["PROBEID"], keep = "first")
+#   # change frame to a dictionary, key 
+#   probeID2EntryID = {}
+#   for probeID, entryID in zip(annoFilter["PROBEID"], annoFilter[entryIDtype]):
+#     probeID2EntryID[probeID] = entryID
+#   return probeID2EntryID
 
 

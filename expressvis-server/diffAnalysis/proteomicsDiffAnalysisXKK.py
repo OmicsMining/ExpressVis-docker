@@ -155,6 +155,7 @@ def proteomicsStatistics(dataframe:pd.core.frame.DataFrame,
     result["adjusted P-Value"]  = multipleTestsCorrect(series=result["P-value"],method=multipleTestsCorrectMethod)
     # if multipleTestsCorrectMethod:
     #     result["P-value"] = multipleTestsCorrect(series=result["P-value"],method=multipleTestsCorrectMethod)
+    result = result.replace({np.nan:None}) # to transformed to json. Json does support np.nan
     result = result.reset_index().to_dict(orient="list")    
     return result
                          

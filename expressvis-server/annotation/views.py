@@ -4,7 +4,9 @@ from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.permissions import AllowAny
 import json
-from annotation.annotationQuery import obtainGeneIDannoInfor, obtainIDmappingsInfoWithinSpecies, \
+from annotation.annotationQuery import checkMatchedPercentageOfgenesUnderSpecificIDtype, \
+  obtainGeneIDannoInfor,\
+   obtainIDmappingsInfoWithinSpecies, \
    obtainMicroarrayIDtypesOfOneSpecies, \
    obtainAnnotationTerms, obtainAnnotationGenes
 #from rest_framework_jwt.authentication import JSONWebTokenAuthentication
@@ -200,3 +202,21 @@ class LoadArrayIDTypesInOneSpecies(APIView):
     idTypes = obtainMicroarrayIDtypesOfOneSpecies(speciesID = speciesID)
     return Response(idTypes)
 
+class IDmatchedPercentage(APIView):
+  '''
+  obtain the percentage of the genes that match the given ID type
+  '''
+  def post(self, request, *args, **kwargs):
+    requestData  = request.data
+
+    speciesID = requestData["speciesID"]
+    IDs       = requestData["IDs"]
+    IDtype    = requestData["IDtype"]
+    
+    matchedPercentage = checkMatchedPercentageOfgenesUnderSpecificIDtype(speciesID, IDs, IDtype)
+
+    return Response({
+      "speciesID":         speciesID,
+      "IDtype":            IDtype,
+      "matchedPercentage": matchedPercentage
+    })

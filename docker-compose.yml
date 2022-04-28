@@ -35,7 +35,7 @@ services:
     hostname: rgseaserver
     image: rgseaserver-image
     volumes:
-      - /var/website-docker/database/ExpressVis/database/serveredByDjango:/database # change '/user/annotationDatabasePath' to your annotation data directory
+      - /home/eagle/Research/bioinformatic_tools/expressvis/database/serveredByDjango:/database # change '/user/annotationDatabasePath' to your annotation data directory
   
   rremovebatchserver:
     restart: "no"
@@ -43,6 +43,9 @@ services:
     container_name: "rremovebatchserver"
     working_dir: "/code"
     command: ["sh", "./removeBatchEffectServer.sh"]
+    deploy:
+      mode: replicated
+      replicas: 2
     ports:
       - "8004:8004"
     hostname: rremovebatchserver
@@ -65,7 +68,7 @@ services:
     volumes:
       - appshared:/app_sock # app_shared volume is used to store sock file that should be accessible from nginx server
       - /var/log/dockeruwsgi:/var/log/uwsgi
-      - /var/website-docker/database/ExpressVis/database/serveredByDjango:/database # change '/user/annotationDatabasePath' to your annotation data directory
+      - /home/eagle/Research/bioinformatic_tools/expressvis/database/serveredByDjango:/database # change '/user/annotationDatabasePath' to your annotation data directory
   
   nginx:
     container_name: nginx-container
@@ -78,7 +81,7 @@ services:
     volumes: 
       - appshared:/nginx_sock
       - /var/log/dockernginx:/var/log/nginx
-      - /var/website-docker/database/ExpressVis/database/serveredByNginx:/static # change '/user/annotationDatabasePath/' to your annotation data directory
+      - /home/eagle/Research/bioinformatic_tools/expressvis/database/serveredByNginx:/static # change '/user/annotationDatabasePath/' to your annotation data directory
 
 volumes:
   appshared:

@@ -6,10 +6,10 @@ from fgvis.settings import DATABASE_DIR
 from annotation.utils import obtainSubList
 #import feather
 from os import walk
-
+import time
 
 from pymongo import MongoClient
-from dataset.settings import GEOspeciesName2taxID
+# from dataset.settings import GEOspeciesName2taxID
 
 client           = MongoClient()
 IDannotaionsDB   = client["geneIDannotations"]
@@ -204,41 +204,41 @@ def obtainMicroarrayIDtypesOfOneSpecies(speciesID):
   return arrayIDtypes
 
 
-def obtainMicroarrayProbeIDsWithOneSymbol(annoPkgName):
-  '''
-  Filter out probes that have no entrez annotation and multiple entrezs annotations
+# def obtainMicroarrayProbeIDsWithOneSymbol(annoPkgName):
+#   '''
+#   Filter out probes that have no entrez annotation and multiple entrezs annotations
 
-  return:
-    a series, [probe1, probe2]
-  '''
-  annoFile  = os.path.join(DATABASE_DIR, "annotations", "biocpackages", annoPkgName + ".ftr")
-  annoFrame = pd.read_feather(annoFile)
+#   return:
+#     a series, [probe1, probe2]
+#   '''
+#   annoFile  = os.path.join(DATABASE_DIR, "annotations", "biocpackages", annoPkgName + ".ftr")
+#   annoFrame = pd.read_feather(annoFile)
   
-  annoFilter = annoFrame.loc[annoFrame["ENTREZID"].notnull(), ]
-  annoFilter = annoFilter.drop_duplicates(subset = ["PROBEID"], keep = False)
+#   annoFilter = annoFrame.loc[annoFrame["ENTREZID"].notnull(), ]
+#   annoFilter = annoFilter.drop_duplicates(subset = ["PROBEID"], keep = False)
 
-  return annoFilter["PROBEID"]
+#   return annoFilter["PROBEID"]
   
-def obtainSymbol2MicroarrayProbeIDs(annoPkgName, geneSymbols):
-  '''
-  retrun:
-    {symbol: [entrez1, entrez2]}
-  '''
-  annoFile  = os.path.join(DATABASE_DIR, "annotations", "biocpackages", annoPkgName + ".ftr")
-  annoFrame = pd.read_feather(annoFile)
+# def obtainSymbol2MicroarrayProbeIDs(annoPkgName, geneSymbols):
+#   '''
+#   retrun:
+#     {symbol: [entrez1, entrez2]}
+#   '''
+#   annoFile  = os.path.join(DATABASE_DIR, "annotations", "biocpackages", annoPkgName + ".ftr")
+#   annoFrame = pd.read_feather(annoFile)
   
-  annoFilter      = annoFrame.loc[annoFrame["SYMBOL"].notnull(), ]
-  annoFilter      = annoFilter.drop_duplicates(subset = ["PROBEID"], keep = "first")
-  annoWithSymbols = annoFilter.loc[annoFilter["SYMBOL"].isin(geneSymbols),]
+#   annoFilter      = annoFrame.loc[annoFrame["SYMBOL"].notnull(), ]
+#   annoFilter      = annoFilter.drop_duplicates(subset = ["PROBEID"], keep = "first")
+#   annoWithSymbols = annoFilter.loc[annoFilter["SYMBOL"].isin(geneSymbols),]
   
-  symbol2probeIDs = {}
-  for probeID, symbol in zip(annoWithSymbols["PROBEID"], annoWithSymbols["SYMBOL"]):
-    if symbol in symbol2probeIDs:
-      symbol2probeIDs[symbol] = symbol2probeIDs[symbol].append(probeID)
-    else:
-      symbol2probeIDs[symbol] = [str(probeID)]
+#   symbol2probeIDs = {}
+#   for probeID, symbol in zip(annoWithSymbols["PROBEID"], annoWithSymbols["SYMBOL"]):
+#     if symbol in symbol2probeIDs:
+#       symbol2probeIDs[symbol] = symbol2probeIDs[symbol].append(probeID)
+#     else:
+#       symbol2probeIDs[symbol] = [str(probeID)]
   
-  return symbol2probeIDs
+#   return symbol2probeIDs
 
 
 # obtain ID mapping between two ID types -- start
@@ -319,6 +319,23 @@ def obtainIDmappingsInfoWithinSpecies(speciesID, IDtype1, IDtype2):
     return _obtainIDmappingsInfoWithinSpeciesOtherThanMicroarrayIDs(speciesID, IDtype1, IDtype2)
 
 # obtain ID mapping between two ID types -- end
+
+
+# Check ID type -- start
+# Check ID type of the IDs from the client is correct
+
+
+def checkMatchedPercentageOfgenesUnderSpecificIDtype(speciesID, IDs, IDtype):
+  #TODO: use mongo to store genes of one IDtype. Loading genes from directory takes too much time, 1s.
+  annoGenesInfo = obtainGeneIDannoInfor(speciesID, IDtype)
+
+  allGenesSet = set(list(annoGenesInfo["genesInfoDic"].keys()))
+  inputGenesSet = set(IDs)
+  intersectGenes = allGenesSet.intersection(inputGenesSet)
+  return len(intersectGenes)/len(inputGenesSet)
+
+# Check ID type -- end
+
 
 
 
