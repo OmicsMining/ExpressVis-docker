@@ -142,6 +142,24 @@ affyLimmaMultipleDiffGroupPairsDiffAnalysis <- function(esetPath, annoLibrary,
   return (diffResultList)
 }
 
+affyLimmaMultipleDiffGroupPairsDiffAnalysisFromClient <- function(expressSet, annoLibrary, 
+    diffGroupPairList, valueThreshold = 0.25, numberThreshold = 1) {
+  esetFilteredByFeature <- filterByFeatureData(eset        = expressSet, 
+                                               annoLibrary = annoLibrary)
+  diffResultList <- map(diffGroupPairList, function(groupPairInfo) {
+    baseSamples   = groupPairInfo $ baseGroup
+    targetSamples = groupPairInfo $ targetGroup
+    diffResults <- affyLimmaDiffAnalysis( eset            = esetFilteredByFeature, 
+                                          baseSamples     = baseSamples, 
+                                          targetSamples   = targetSamples, 
+                                          valueThreshold  = valueThreshold, 
+                                          numberThreshold = numberThreshold
+    )
+    return (diffResults)
+  })
+  return (diffResultList)
+}
+
 rnaSeqLimmaMultipleDiffGroupPairsDiffAanalysis <- function(countsPath, diffGroupPairsInfo) {
   
 }

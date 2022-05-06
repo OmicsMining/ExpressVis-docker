@@ -5,6 +5,8 @@
 
 library(purrr)
 library(DESeq2)
+library("BiocParallel")
+register(MulticoreParam(4))
 
 readCounts <- function(arrayID, storeDir) {
   # read counts data
@@ -37,8 +39,13 @@ deseq2Diff <- function(countsMatrix, baseSamples, targetSamples) {
   keep <- rowSums(counts(DDS)) >= 5 * length(c(baseSamples, targetSamples)) # TODO: why
   DDS  <- DDS[keep, ]
   # differential analysis
-  DDS         <- DESeq(DDS)
-  diffResults <- results(DDS)
+  gc()
+  rm(list = c("countsMatrix", "keep", "baseSamples", "targetSamples", "samplesType", "samplesAnno"))
+  
+
+  DDS         <- DESeq(DDS)#, parallel=TRUE, BPPARAM=MulticoreParam(4))
+  diffResults <- results(DDS)#, parallel=TRUE, BPPARAM=MulticoreParam(4))
+  # using parallel does not speed up, why?
   resultFrame <- as.data.frame(diffResults)
   resultSub   <- resultFrame[,c("log2FoldChange","pvalue", "padj")]
   resultSub $ Gene.ID <- rownames(resultSub) # only use log2FoldChange, and padj

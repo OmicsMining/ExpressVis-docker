@@ -16,7 +16,7 @@ function(valuesDic, genes, annoLibrary, diffGroupPairs) {
   groupPairList <- convertDiffGroupPairs(diffGroupPairs)
   
   expressSet <- constructEsetFromExpressionMatrix(valuesMatrix)
-  diffResults <- affyLimmaMultipleDiffGroupPairsDiffAnalysis(
+  diffResults <- affyLimmaMultipleDiffGroupPairsDiffAnalysisFromClient(
     expressSet  = expressSet,
     annoLibrary = annoLibrary,
     diffGroupPairList = groupPairList,
@@ -49,7 +49,7 @@ function(valuesDic, genes, annoLibrary, baseSamples, targetSamples) {
 #* @param genes
 #* @param baseSamples
 #* @param targetSamples
-#* @post /deseq2WithCounts
+#* @post /rnaseqOneDiffGroupPairWithCounts
 function(countsDic, genes, baseSamples, targetSamples) {
   countsMatrix = convertValuesList2matrix(countsDic, genes)
   
@@ -58,13 +58,13 @@ function(countsDic, genes, baseSamples, targetSamples) {
     baseSamples   = baseSamples,
     targetSamples = targetSamples
   )
-  return (rjson::toJSON(diffResults)) 
+  return (rjson::toJSON(diffResults))
 }
 
 #* @param countsDic
 #* @param genes
 #* @param diffGroupPairs
-#* @post /deseq2WithCountsMultipleGroupPairs
+#* @post /rnaseqMultipleDiffGroupPairsWithCounts
 function(countsDic, genes, diffGroupPairs) {
   countsMatrix  <- convertValuesList2matrix(countsDic, genes)
   groupPairList <- convertDiffGroupPairs(diffGroupPairs)
@@ -86,6 +86,21 @@ function(a, b) {
   return (sumResult)
 }
 
+
+#' @filter cors
+cors <- function(req, res) {
+  
+  res$setHeader("Access-Control-Allow-Origin", "*")
+  
+  if (req$REQUEST_METHOD == "OPTIONS") {
+    res$setHeader("Access-Control-Allow-Methods","*")
+    res$setHeader("Access-Control-Allow-Headers", req$HTTP_ACCESS_CONTROL_REQUEST_HEADERS)
+    res$status <- 200 
+    return(list())
+  } else {
+    plumber::forward()
+  }
+}
 
 #* @post /test
 # function(baseSamples, targetSamples) {

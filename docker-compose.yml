@@ -3,13 +3,14 @@ services:
   rdiffserver:
     restart: "no"
     build: "./rdiffServer"
-    container_name: "rdiffserver"
+    #container_name: "rdiffserver"
     working_dir: "/code"
     command: ["sh", "./diffServer.sh"]
-    ports:
-      - "8001:8001"
-    expose:
-      - "8001"
+    #ports:
+    # - "8001:8001"
+    deploy:
+      mode: replicated
+      replicas: 3
     hostname: rdiffserver
     image: rdiffserver-image
 
@@ -68,7 +69,7 @@ services:
     volumes:
       - appshared:/app_sock # app_shared volume is used to store sock file that should be accessible from nginx server
       - /var/log/dockeruwsgi:/var/log/uwsgi
-      - /home/eagle/Research/bioinformatic_tools/expressvis/database/serveredByDjango:/database # change '/user/annotationDatabasePath' to your annotation data directory
+      - /user/annotationDatabasePath/serveredByDjango:/database # change '/user/annotationDatabasePath' to your annotation data directory
   
   nginx:
     container_name: nginx-container
@@ -82,7 +83,7 @@ services:
     volumes: 
       - appshared:/nginx_sock
       - /var/log/dockernginx:/var/log/nginx
-      - /home/eagle/Research/bioinformatic_tools/expressvis/database/serveredByNginx:/static # change '/user/annotationDatabasePath/' to your annotation data directory
+      - /user/annotationDatabasePath/serveredByNginx:/static # change '/user/annotationDatabasePath/' to your annotation data directory
 
 volumes:
   appshared:
