@@ -40,14 +40,14 @@ services:
   rremovebatchserver:
     restart: "no"
     build: "./rRemovebatcheffect"
-    container_name: "rremovebatchserver"
+    #container_name: "rremovebatchserver"
     working_dir: "/code"
     command: ["sh", "./removeBatchEffectServer.sh"]
     deploy:
       mode: replicated
       replicas: 2
-    ports:
-      - "8004:8004"
+      #ports:
+      #- "8004:8004"
     hostname: rremovebatchserver
     image: rremovebatchserver-image
 
@@ -78,6 +78,7 @@ services:
       - "80:80"
     depends_on:
       - djangoserver
+      - rremovebatchserver
     volumes: 
       - appshared:/nginx_sock
       - /var/log/dockernginx:/var/log/nginx
