@@ -36,7 +36,7 @@ services:
     hostname: rgseaserver
     image: rgseaserver-image
     volumes:
-      - /home/eagle/Research/bioinformatic_tools/expressvis/database/serveredByDjango:/database # change '/user/annotationDatabasePath' to your annotation data directory
+      - /user/annotationDatabasePath/serveredByDjango:/database # change '/user/annotationDatabasePath' to your annotation data directory
   
   rremovebatchserver:
     restart: "no"
