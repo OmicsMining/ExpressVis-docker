@@ -1,2 +1,0 @@
-Package	Maintainer	Title	Rank
-mogene21sttranscriptcluster.db	test	Test	3

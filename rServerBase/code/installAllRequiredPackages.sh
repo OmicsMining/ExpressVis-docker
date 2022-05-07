@@ -1,1 +1,0 @@
-Rscript ./code/installBasicPackagesScript.R
