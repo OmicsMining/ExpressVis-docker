@@ -1,0 +1,94 @@
+version: "3.7"
+services:
+  rdiffserver:
+    restart: "no"
+    build: "./rdiffServer"
+    #container_name: "rdiffserver"
+    working_dir: "/code"
+    command: ["sh", "./diffServer.sh"]
+    #ports:
+    # - "8001:8001"
+    deploy:
+      mode: replicated
+      replicas: 3
+    hostname: rdiffserver
+    image: rdiffserver-image
+
+  rclinicalserver:
+    restart: "no"
+    build: "./rClinicalServer"
+    container_name: "rclinicalserver"
+    working_dir: "/code"
+    command: ["sh", "./clinicalServer.sh"]
+    ports:
+      - "8002:8002"
+    hostname: rclinicalserver
+    image: rclinicalserver-image
+
+  rgseaserver:
+    restart: "no"
+    build: "./rGSEAserver"
+    container_name: "rgseaserver"
+    working_dir: "/code"
+    command: ["sh", "./GSEAserver.sh"]
+    ports:
+      - "8003:8003"
+    hostname: rgseaserver
+    image: rgseaserver-image
+    volumes:
+      - /user/annotationDatabasePath/serveredByDjango:/database # change '/user/annotationDatabasePath' to your annotation data directory
+  
+  rremovebatchserver:
+    restart: "no"
+    build: "./rRemovebatcheffect"
+    #container_name: "rremovebatchserver"
+    working_dir: "/code"
+    command: ["sh", "./removeBatchEffectServer.sh"]
+    deploy:
+      mode: replicated
+      replicas: 2
+      #ports:
+      #- "8004:8004"
+    hostname: rremovebatchserver
+    image: rremovebatchserver-image
+
+  djangoserver:
+    restart: "no"
+    build: ./expressvis-server
+    container_name: djangoserver
+    command: ["uwsgi", "--ini", "uwsgi.ini"]
+    expose:
+      - "8000"
+    hostname: djangoserver
+    image: djangoserver-image
+    depends_on:
+      - rdiffserver
+      - rclinicalserver
+      - rgseaserver
+      - rremovebatchserver
+    volumes:
+      - appshared:/app_sock # app_shared volume is used to store sock file that should be accessible from nginx server
+      - /var/log/dockeruwsgi:/var/log/uwsgi
+      - /user/annotationDatabasePath/serveredByDjango:/database # change '/user/annotationDatabasePath' to your annotation data directory
+  
+  nginx:
+    container_name: nginx-container
+    build: ./nginx
+    restart: "no"
+    ports:
+      - "80:80"
+    depends_on:
+      - djangoserver
+      - rremovebatchserver
+    volumes: 
+      - appshared:/nginx_sock
+      - /var/log/dockernginx:/var/log/nginx
+      - /user/annotationDatabasePath/serveredByNginx:/static # change '/user/annotationDatabasePath/' to your annotation data directory
+
+volumes:
+  appshared:
+  
+
+
+  
+    

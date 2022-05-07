@@ -1,0 +1,2 @@
+Package	Maintainer	Title	Rank
+illuminaRatv1.db	Mark Dunning	Illumina Ratv1 annotation data (chip illuminaRatv1)	73
