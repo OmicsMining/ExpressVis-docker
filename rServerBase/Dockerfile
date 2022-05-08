@@ -7,5 +7,7 @@ RUN apt-get update -y \
 
 COPY ./code ./code
 
+RUN dos2unix sh ./code/installAllRequiredPackages.sh
+
 RUN sh ./code/installAllRequiredPackages.sh
 
