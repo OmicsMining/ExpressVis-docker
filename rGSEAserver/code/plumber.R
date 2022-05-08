@@ -3,7 +3,7 @@ source("./obtainEnrichedAnnotations.utils.R")
 
 library(rjson)
 
-ANNOTATION_DATABASE_DIR = "/database/serveredByDjango/speciesCenteredInfo"
+ANNOTATION_DATABASE_DIR = "/database/speciesCenteredInfo"
 
 #* @param speciesID
 #* @param geneIDtype

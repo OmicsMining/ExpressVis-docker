@@ -99,6 +99,41 @@ function(clinicalDic, expressionDic, patientIDs, endpointTimeCol, endpointStatus
 }
 
 
+#* @param clinicalDic
+#* @param expressionDic
+#* @param patientIDs
+#* @param endpointTimeCol
+#* @param endpointStatusCol
+#* @post /surivialSplitApproximativeMaxStatAndForestAnnotation
+function(clinicalDic, expressionDic, patientIDs, endpointTimeCol, endpointStatusCol, minProb, maxProb) {
+  clinicalFrame <- as_tibble(clinicalDic)
+  expressionFrame <- as_tibble(expressionDic)
+  survivalFrame <- bind_cols(clinicalFrame, expressionFrame)
+  survivalFrame["PatientID"] <- patientIDs
+  
+  survivalSplitFrame <- maxStatSplitCoin(
+    survivalDF = survivalFrame, 
+    patientID  = "PatientID",
+    time       = endpointTimeCol,
+    status     = endpointStatusCol,
+    minProp    = minProb,
+    maxProp    = maxProb)
+  
+  survivalAnno <-  survivalAnnotation(
+    splitDF   = survivalSplitFrame,
+    patientID = "PatientID", 
+    time      = endpointTimeCol,
+    status    = endpointStatusCol)
+  
+  
+  resultList <- list(survivalSplit = survivalSplitFrame, survivalAnno = survivalAnno)
+  return (rjson::toJSON(resultList))
+}
+
+
+
+
+
 
 
 

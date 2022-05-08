@@ -1,5 +1,5 @@
 # These code is written by Kaikun Xu
-
+library(coin)
 
 # 1: 该函数用于根据指定阈值分割高低表达组
 .dichotomize <- function(x,cutpoint,right=TRUE,labels = c("low", "high")){
@@ -77,18 +77,25 @@ percentageSplit <- function(survivalDF,patientID="PatientID",time="time",status=
   return (survivalRes)
 }
 
-survivalSplit <- function(survivalDF,patientID="PatientID",time="time",status="status",method="percentageSplit",
-                          percentageThreshold=0.5,minProb=0.1,maxProb=0.9){
-  survivalRes <- NULL
-  if (method=="maxstatSplit"){
-    survivalRes <- maxStatSplit(survivalDF=survivalDF,patientID=patientID,time=time,status=status,minProb=minProb,maxProb=maxProb)
-  }else if (method=="percentageSplit"){
-    survivalRes <- percentageSplit(survivalDF=survivalDF,patientID=patientID,time=time,status=status,percentageThreshold=percentageThreshold)
-  }else {
-    cat("'method' parameter should be 'maxstatSplit' or 'percentageSplit'." )
+# 3. 该函数基于coni::maxstats_test()方法—Approximative maximally selected statistics (Monte Carlo)—对输入矩阵划分高低表达类别，高低表达组使用0/1表示，保存为tibble.
+maxStatSplitCoin <- function(survivalDF,patientID,time,status,minProp=0.1,maxProp=0.9){
+  survivalDF <- survivalDF[!(is.na(survivalDF[[time]])) | !(is.na(survivalDF[[status]])),]
+  colName <- colnames(survivalDF)
+  indexList <- c(patientID,time,status)
+  proteinNameList <- setdiff(colName,indexList)%>%as.vector()
+  survivalRes <- select(survivalDF,all_of(indexList))
+  
+  for (proteinName in proteinNameList) {
+    tryCatch({
+      survivalSub = survivalDF%>%select(.,c(time,status,proteinName))
+      survivalFormula <- as.formula(paste("Surv(`", time, "`,`", status, "`) ~`", proteinName,"`",sep =""))
+      maxstatResCoin <- coin::maxstat_test(formula=survivalFormula,data=survivalSub,minprop = minProp, maxprop = maxProp,distribution = "approximate")
+      cutpointCoin <- maxstatResCoin@estimates$estimate$cutpoint
+      survivalRes[proteinName]<- .dichotomize(x=survivalSub[proteinName]%>%as_vector(),cutpoint=cutpointCoin,right=TRUE,labels=c(0,1))%>% as_tibble()
+    }, error = function(e) {
+      print(paste(proteinName,e,sep=": "))
+    })
   }
-  return (survivalRes)
+  return(survivalRes)
 }
-
-
 
