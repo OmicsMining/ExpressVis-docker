@@ -1,4 +1,4 @@
-FROM bioconductor/bioconductor_docker:latest
+FROM rserverbase:latest
 
 # Installing plumber requires sodium
 RUN apt-get update -y \
