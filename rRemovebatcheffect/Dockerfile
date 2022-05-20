@@ -7,7 +7,7 @@ RUN apt-get update -y \
 COPY ./code ./code
 
 
-RUN dos2unix ./code/installRequiredPackages.R
+RUN dos2unix ./code/installRequiredPackages.R ./code/removeBatchEffectServer.sh
 
 RUN Rscript ./code/installRequiredPackages.R
 

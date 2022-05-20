@@ -1,4 +1,4 @@
-requiredPackages <- c("plumber", "purrr", "dplyr", "tidyverse", "rjson")
+requiredPackages <- c("plumber", "purrr", "dplyr", "tidyverse", "rjson", "xtable") # must add xtable, or sva can not be installed
 
 
 packageSource = "https://mirror-hk.koddos.net/CRAN/"  # change this to your nearest mirror
